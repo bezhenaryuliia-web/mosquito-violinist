@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Іди на...</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,650;1,9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --moss: #2f4b3c;
+    --moss-soft: #4a6b56;
+    --leaf-bg: #eaf1e6;
+    --leaf-bg-2: #dbe8d6;
+    --cream: #f8f4ea;
+    --amber: #e08a3c;
+    --amber-deep: #c96a2b;
+    --blush: #e6a99a;
+    --ink: #24352b;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+    overflow-x:hidden;
+  }
+
+  body{
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(224,138,60,0.10), transparent 45%),
+      radial-gradient(ellipse at 85% 85%, rgba(230,169,154,0.16), transparent 50%),
+      linear-gradient(180deg, var(--leaf-bg) 0%, var(--leaf-bg-2) 100%);
+    font-family: 'Work Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    position: relative;
+  }
+
+  #emoji-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .floating-emoji{
+    position: absolute;
+    font-size: 28px;
+    will-change: transform;
+    filter: drop-shadow(0 3px 6px rgba(47,75,60,0.18));
+    user-select: none;
+  }
+
+  .page{
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 90px;
+    text-align: center;
+  }
+
+  .eyebrow{
+    display:inline-block;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber-deep);
+    background: rgba(224,138,60,0.12);
+    border: 1px solid rgba(224,138,60,0.35);
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+
+  h1{
+    font-family: 'Fraunces', serif;
+    font-weight: 650;
+    font-style: normal;
+    font-size: clamp(38px, 6vw, 64px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    color: var(--moss);
+    letter-spacing: -0.01em;
+  }
+
+  h1 em{
+    font-style: italic;
+    font-weight: 500;
+    color: var(--amber-deep);
+  }
+
+  .subtitle{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(18px, 2.4vw, 24px);
+    color: var(--moss-soft);
+    max-width: 520px;
+    margin: 0 auto 30px;
+    line-height: 1.45;
+  }
+
+  .frame{
+    position: relative;
+    width: min(440px, 82vw);
+    margin: 0 auto 34px;
+    border-radius: 28px;
+    padding: 10px;
+    background: linear-gradient(160deg, var(--cream), #efe6d3);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 24px 48px -20px rgba(47,75,60,0.35);
+    border: 1px solid rgba(47,75,60,0.08);
+  }
+
+  .frame img{
+    display:block;
+    width: 100%;
+    border-radius: 20px;
+    filter: saturate(1.04) contrast(1.02);
+  }
+
+  .frame::after{
+    content: "🎻";
+    position: absolute;
+    bottom: -14px;
+    right: -10px;
+    font-size: 34px;
+    transform: rotate(-12deg);
+    filter: drop-shadow(0 4px 8px rgba(47,75,60,0.3));
+  }
+
+  .caption{
+    font-size: 13px;
+    color: var(--moss-soft);
+    letter-spacing: 0.02em;
+    margin: 0 0 46px;
+    opacity: 0.85;
+  }
+
+  .small-text{
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: var(--ink);
+    max-width: 500px;
+    margin: 0 auto;
+    opacity: 0.88;
+  }
+
+  .divider{
+    width: 46px;
+    height: 2px;
+    background: var(--amber);
+    opacity: 0.5;
+    margin: 40px auto;
+    border-radius: 2px;
+  }
+
+  .credit{
+    font-size: 12.5px;
+    color: var(--moss-soft);
+    opacity: 0.6;
+    letter-spacing: 0.03em;
+  }
+
+  /* sound toggle */
+  #sound-toggle{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(47,75,60,0.15);
+    background: rgba(248,244,234,0.85);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 20px -8px rgba(47,75,60,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 22px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  }
+
+  #sound-toggle:hover{
+    transform: scale(1.06);
+    box-shadow: 0 10px 24px -8px rgba(47,75,60,0.5);
+  }
+
+  #sound-toggle:active{
+    transform: scale(0.95);
+  }
+
+  #sound-toggle.playing{
+    background: rgba(224,138,60,0.16);
+    border-color: rgba(224,138,60,0.4);
+  }
+
+  #sound-toggle .pulse{
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--amber);
+    opacity: 0;
+  }
+
+  #sound-toggle.playing .pulse{
+    animation: pulse 1.8s ease-out infinite;
+  }
+
+  @keyframes pulse{
+    0%{ transform: scale(1); opacity: 0.6; }
+    100%{ transform: scale(1.6); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .floating-emoji{ display: none; }
+    #sound-toggle.playing .pulse{ animation: none; }
+  }
+
+  @media (max-width: 480px){
+    .page{ padding: 56px 18px 70px; }
+    #sound-toggle{ width: 46px; height: 46px; font-size: 19px; top: 14px; right: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="emoji-layer"></div>
+
+<button id="sound-toggle" aria-label="Увімкнути звук" title="Звук">
+  <span class="pulse"></span>
+  <span id="sound-icon">🔇</span>
+</button>
+
+<div class="page">
+  <span class="eyebrow">ІДІ НАХУЙ</span>
+
+  <h1>Вітаємо! Вас послали <br><em>нахуй</em>!</h1>
+
+  <p class="subtitle">Навіть не знаю, що ви зробили, щоб заслужити на таке щастя.</p>
+
+  <div class="frame">
+    <img src="mosquito.jpg">
+  </div>
+  <p class="caption">тепер цей комарик нашіптує вам на вушко</p>
+
+  <div class="divider"></div>
+
+  <p class="small-text">
+    Звісно, можете сюди ж послати Вашого друга, просто натисніть кнопку нижче.
+  </p>
+
+</div>
+
+<script>
+  // ---------- Floating / bouncing emojis ----------
+  (function(){
+    const layer = document.getElementById('emoji-layer');
+    const emojiChars = ['🖕', '🖕🏻', '🖕🏽', '🖕🏿', '🦟'];
+    const count = window.innerWidth < 600 ? 9 : 14;
+    const items = [];
+
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    for(let i = 0; i < count; i++){
+      const el = document.createElement('div');
+      el.className = 'floating-emoji';
+      el.textContent = emojiChars[i % emojiChars.length];
+      const size = rand(20, 34);
+      el.style.fontSize = size + 'px';
+      layer.appendChild(el);
+
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      items.push({
+        el,
+        x: rand(0, w - size),
+        y: rand(0, h - size),
+        vx: rand(-0.6, 0.6) || 0.3,
+        vy: rand(-0.6, 0.6) || 0.3,
+        size,
+        rot: rand(0, 360),
+        vrot: rand(-0.3, 0.3)
+      });
+    }
+
+    // ensure minimum speed so nothing sits still
+    items.forEach(it => {
+      if(Math.abs(it.vx) < 0.15) it.vx = it.vx < 0 ? -0.25 : 0.25;
+      if(Math.abs(it.vy) < 0.15) it.vy = it.vy < 0 ? -0.25 : 0.25;
+    });
+
+    function tick(){
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      items.forEach(it => {
+        it.x += it.vx;
+        it.y += it.vy;
+        it.rot += it.vrot;
+
+        if(it.x <= 0){ it.x = 0; it.vx *= -1; }
+        if(it.x >= w - it.size){ it.x = w - it.size; it.vx *= -1; }
+        if(it.y <= 0){ it.y = 0; it.vy *= -1; }
+        if(it.y >= h - it.size){ it.y = h - it.size; it.vy *= -1; }
+
+        it.el.style.transform = `translate(${it.x}px, ${it.y}px) rotate(${it.rot}deg)`;
+      });
+
+      requestAnimationFrame(tick);
+    }
+
+    if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', () => {
+      items.forEach(it => {
+        it.x = Math.min(it.x, window.innerWidth - it.size);
+        it.y = Math.min(it.y, window.innerHeight - it.size);
+      });
+    });
+  })();
+
+  // ---------- Ambient "orchestra" sound via Web Audio API ----------
+  (function(){
+    const btn = document.getElementById('sound-toggle');
+    const icon = document.getElementById('sound-icon');
+    let ctx = null;
+    let masterGain = null;
+    let playing = false;
+    let nodes = [];
+    let melodyTimer = null;
+
+    function initAudio(){
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = ctx.createGain();
+      masterGain.gain.value = 0.0;
+      masterGain.connect(ctx.destination);
+    }
+
+    function makeViolinNote(freq, startTime, duration, gainPeak){
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 2200;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(gainPeak, startTime + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      // gentle vibrato
+      const vibrato = ctx.createOscillator();
+      vibrato.frequency.value = 5.2;
+      const vibratoGain = ctx.createGain();
+      vibratoGain.gain.value = 3.5;
+      vibrato.connect(vibratoGain);
+      vibratoGain.connect(osc.frequency);
+
+      osc.frequency.value = freq;
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(startTime);
+      vibrato.start(startTime);
+      osc.stop(startTime + duration + 0.05);
+      vibrato.stop(startTime + duration + 0.05);
+
+      nodes.push(osc, vibrato);
+    }
+
+    function makeMosquitoBuzz(startTime, duration){
+      const osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.value = 220;
+
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 32;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 40;
+      lfo.connect(lfoGain);
+      lfoGain.connect(osc.frequency);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.025, startTime + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      osc.start(startTime);
+      lfo.start(startTime);
+      osc.stop(startTime + duration + 0.05);
+      lfo.stop(startTime + duration + 0.05);
+
+      nodes.push(osc, lfo);
+    }
+
+    // a small looping melodic phrase, violin-ish, pentatonic
+    const scale = [329.63, 369.99, 415.30, 493.88, 554.37, 622.25, 739.99]; // E major-ish pentatonic-flavored
+
+    function scheduleLoop(){
+      if(!playing) return;
+      const now = ctx.currentTime + 0.1;
+      const phraseLen = 4.2;
+
+      const pattern = [0, 2, 4, 2, 5, 4, 2, 0];
+      let t = now;
+      pattern.forEach((idx, i) => {
+        const dur = i % 3 === 0 ? 0.75 : 0.5;
+        makeViolinNote(scale[idx], t, dur, 0.05);
+        t += dur * 0.9;
+      });
+
+      makeMosquitoBuzz(now + 0.2, phraseLen - 0.4);
+
+      melodyTimer = setTimeout(scheduleLoop, phraseLen * 1000);
+    }
+
+    function startSound(){
+      if(!ctx) initAudio();
+      if(ctx.state === 'suspended') ctx.resume();
+      playing = true;
+      masterGain.gain.cancelScheduledValues(ctx.currentTime);
+      masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0.9, ctx.currentTime + 0.6);
+      scheduleLoop();
+      btn.classList.add('playing');
+      icon.textContent = '🔊';
+      btn.setAttribute('aria-label', 'Вимкнути звук');
+    }
+
+    function stopSound(){
+      playing = false;
+      if(melodyTimer) clearTimeout(melodyTimer);
+      if(ctx && masterGain){
+        masterGain.gain.cancelScheduledValues(ctx.currentTime);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, ctx.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+      }
+      btn.classList.remove('playing');
+      icon.textContent = '🔇';
+      btn.setAttribute('aria-label', 'Увімкнути звук');
+    }
+
+    btn.addEventListener('click', () => {
+      if(playing){
+        stopSound();
+      } else {
+        startSound();
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
