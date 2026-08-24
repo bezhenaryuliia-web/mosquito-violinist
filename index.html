@@ -231,6 +231,171 @@
     .page{ padding: 56px 18px 70px; }
     #sound-toggle{ width: 46px; height: 46px; font-size: 19px; top: 14px; right: 14px; }
   }
+
+  .link-btn{
+    margin-top: 44px;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--cream);
+    background: linear-gradient(160deg, var(--amber), var(--amber-deep));
+    border: none;
+    padding: 13px 26px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgba(201,106,43,0.55);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .link-btn:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -10px rgba(201,106,43,0.6);
+  }
+
+  .link-btn:active{
+    transform: translateY(0);
+  }
+
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(36,53,43,0.45);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay[hidden]{ display: none; }
+
+  .modal-card{
+    position: relative;
+    width: min(400px, 100%);
+    background: var(--cream);
+    border-radius: 22px;
+    padding: 34px 28px 28px;
+    box-shadow: 0 30px 60px -20px rgba(36,53,43,0.5);
+    border: 1px solid rgba(47,75,60,0.08);
+    text-align: center;
+  }
+
+  .modal-close{
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(47,75,60,0.08);
+    color: var(--moss);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+  }
+
+  .modal-close:hover{ background: rgba(47,75,60,0.16); }
+
+  .modal-title{
+    font-family: 'Fraunces', serif;
+    font-weight: 650;
+    font-size: 24px;
+    color: var(--moss);
+    margin: 0 0 10px;
+  }
+
+  .modal-hint{
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--moss-soft);
+    margin: 0 0 22px;
+  }
+
+  .name-input{
+    width: 100%;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(47,75,60,0.2);
+    background: #fff;
+    color: var(--ink);
+    margin-bottom: 14px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .name-input:focus{
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(224,138,60,0.18);
+  }
+
+  .generate-btn{
+    width: 100%;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--cream);
+    background: linear-gradient(160deg, var(--moss), var(--moss-soft));
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  .generate-btn:hover{ transform: translateY(-1px); }
+  .generate-btn:disabled{ opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .result-box{
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .result-link{
+    flex: 1;
+    min-width: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12.5px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(47,75,60,0.18);
+    background: #fff;
+    color: var(--moss-soft);
+  }
+
+  .copy-btn{
+    flex-shrink: 0;
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--moss);
+    background: rgba(224,138,60,0.16);
+    border: 1px solid rgba(224,138,60,0.35);
+    padding: 0 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .copy-btn:hover{ background: rgba(224,138,60,0.26); }
+
+  .copy-note{
+    font-size: 12.5px;
+    color: var(--amber-deep);
+    margin: 10px 0 0;
+  }
+
+  @media (max-width: 480px){
+    .modal-card{ padding: 28px 20px 22px; }
+  }
 </style>
 </head>
 <body>
@@ -259,6 +424,24 @@
   <p class="small-text">
     Звісно, можете сюди ж послати Вашого друга, просто натисніть кнопку нижче.
   </p>
+
+  <button id="open-link-btn" class="link-btn">🔗 Створити іменне посилання</button>
+</div>
+
+<div id="link-modal" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <button id="modal-close" class="modal-close" aria-label="Закрити">✕</button>
+    <h2 class="modal-title">Персональне вітання</h2>
+    <p class="modal-hint">Введіть ім'я — отримаєте посилання, за яким заголовок покаже "Вітаємо, Ім'я!"</p>
+    <input id="name-input" class="name-input" type="text" placeholder="Наприклад: Олена" maxlength="40" autocomplete="off">
+    <button id="generate-btn" class="generate-btn">Згенерувати посилання</button>
+    <div id="result-box" class="result-box" hidden>
+      <input id="result-link" class="result-link" type="text" readonly>
+      <button id="copy-btn" class="copy-btn">Копіювати</button>
+    </div>
+    <p id="copy-note" class="copy-note" hidden>Скопійовано ✓</p>
+  </div>
+</div>
 
 </div>
 
@@ -465,6 +648,80 @@
       } else {
         startSound();
       }
+    });
+    
+  })();
+
+  // ---------- Personalised greeting from URL ----------
+  (function(){
+    const greeting = document.getElementById('greeting');
+    const params = new URLSearchParams(window.location.search);
+    const name = (params.get('name') || '').trim();
+    if(name){
+      greeting.textContent = `Вітаємо, ${name}!`;
+    }
+  })();
+
+  // ---------- Personal link generator ----------
+  (function(){
+    const openBtn = document.getElementById('open-link-btn');
+    const modal = document.getElementById('link-modal');
+    const closeBtn = document.getElementById('modal-close');
+    const input = document.getElementById('name-input');
+    const generateBtn = document.getElementById('generate-btn');
+    const resultBox = document.getElementById('result-box');
+    const resultLink = document.getElementById('result-link');
+    const copyBtn = document.getElementById('copy-btn');
+    const copyNote = document.getElementById('copy-note');
+
+    function openModal(){
+      modal.hidden = false;
+      resultBox.hidden = true;
+      copyNote.hidden = true;
+      input.value = '';
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeModal(){
+      modal.hidden = true;
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if(e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && !modal.hidden) closeModal();
+    });
+
+    function generateLink(){
+      const name = input.value.trim();
+      if(!name) { input.focus(); return; }
+
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.searchParams.set('name', name);
+
+      resultLink.value = url.toString();
+      resultBox.hidden = false;
+      copyNote.hidden = true;
+    }
+
+    generateBtn.addEventListener('click', generateLink);
+    input.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') generateLink();
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(resultLink.value);
+      } catch(err){
+        resultLink.select();
+        document.execCommand('copy');
+      }
+      copyNote.hidden = false;
+      setTimeout(() => { copyNote.hidden = true; }, 2000);
     });
   })();
 </script>
